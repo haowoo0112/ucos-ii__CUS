@@ -1220,10 +1220,10 @@ void  OSTimeTick (void)
         }
         OS_EXIT_CRITICAL();
         
-        for (i = 0; i < TASK_NUMBER; i++) {
+        /*for (i = 0; i < TASK_NUMBER; i++) {
             printf("%d %d\n",OSTCBPrioTbl[i]->OSTCBId, OSTCBPrioTbl[i]->OSTCBExtPtr->deadline_time);
         }
-        printf("\n");
+        printf("\n");*/
         
         INT8U      y;
         if (OSTCBCur->OSTCBPrio != OS_TASK_IDLE_PRIO) {
@@ -1255,7 +1255,7 @@ void  OSTimeTick (void)
         while (ptcb->OSTCBPrio != OS_TASK_IDLE_PRIO) {    
             OS_ENTER_CRITICAL();
             if (OSTimeGet() == ptcb->OSTCBExtPtr->deadline_time  && ptcb->OSTCBExtPtr->count < ptcb->OSTCBExtPtr->TaskExecutionTime-1 && OSTimeGet() > ptcb->OSTCBExtPtr->TaskArriveTime) {
-                printf("%d %d %d %d\n", ptcb->OSTCBExtPtr->arrive_time, ptcb->OSTCBExtPtr->TaskPeriodic, ptcb->OSTCBExtPtr->count, ptcb->OSTCBExtPtr->TaskExecutionTime);
+                //printf("%d %d %d %d\n", ptcb->OSTCBExtPtr->arrive_time, ptcb->OSTCBExtPtr->TaskPeriodic, ptcb->OSTCBExtPtr->count, ptcb->OSTCBExtPtr->TaskExecutionTime);
                 printf("%2d\tMissDeadline\t task(%2d)(%2d)\t -------------------\n", OSTimeGet(), ptcb ->OSTCBId, ptcb->OSTCBExtPtr->TaskNumber);
                 if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
                 {

@@ -144,6 +144,7 @@ void InputFile() {
         }
         if (i == 2) { //aperiodic task
             APERIODIC_TASK_ID = TaskParameter[j].TaskID;
+            APERIODIC_TASK_UTILIZATION = TaskInfo[1];
         }
         
         /*Initial Priority*/
@@ -202,6 +203,18 @@ void InputAperiodicFile() {
     }
 
     fclose(fp);
+
+    int temp;
+
+    for (i = 0; i < APERIODIC_JOB_NUMBER-1; i++) {
+        for (j = 0; j < APERIODIC_JOB_NUMBER-1; j++) {
+            if (aperiodic_job_parameter[j].arrive_time > aperiodic_job_parameter[j + 1].arrive_time) {
+                temp = aperiodic_job_parameter[j + 1].arrive_time;
+                aperiodic_job_parameter[j + 1].arrive_time = aperiodic_job_parameter[j].arrive_time;
+                aperiodic_job_parameter[j].arrive_time = temp;
+            }
+        }
+    }
 }
 
 

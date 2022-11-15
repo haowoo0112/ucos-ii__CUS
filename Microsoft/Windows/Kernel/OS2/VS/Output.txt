@@ -1,4 +1,4 @@
- 2	Completion	 task( 1)( 0)	 task( 2)( 0)	       2	      1		     0		    4
- 5	Completion	 task( 2)( 0)	 task(63)	       5	      2		     0		    3
- 6	Preemption	 task(63)	 task( 1)( 1)
- 8	Completion	 task( 1)( 1)	 task( 2)( 1)	       2	      2		     0		    4
+ 2	Completion	 task( 1)( 0)	 task( 2)( 0)	       2	      1		     0		    6
+ 5	Completion	 task( 2)( 0)	 task( 3)( 0)	       5	      2		     0		    5
+ 9	Completion	 task( 3)( 0)	 task( 1)( 1)	       9	      2		     0		    6
+11	Completion	 task( 1)( 1)	 task( 2)( 1)	       3	      2		     0		    5

@@ -1,7 +1,6 @@
 ﻿  os_core.c
-C:\Users\ib701\Desktop\RTOS_M11102118_PA2_EDF\Micrium\Software\uCOS-II\Source\os_core.c(701,13): warning C4101: 'ptcb': 未參考的區域變數
-C:\Users\ib701\Desktop\RTOS_M11102118_PA2_EDF\Micrium\Software\uCOS-II\Source\os_core.c(1006,44): warning C4101: 'temp': 未參考的區域變數
-C:\Users\ib701\Desktop\RTOS_M11102118_PA2_EDF\Micrium\Software\uCOS-II\Source\os_core.c(1141,13): warning C4013: 'exit' 未定義; 假設 extern 傳回整數
-C:\Users\ib701\Desktop\RTOS_M11102118_PA2_EDF\Micrium\Software\uCOS-II\Source\os_core.c(1195,52): warning C4101: 'temp': 未參考的區域變數
-  LINK : 最後的累加連結找不到或未建置 C:\Users\ib701\Desktop\RTOS_M11102118_PA2_EDF\Microsoft\Windows\Kernel\OS2\VS\Debug\OS2.exe，正在執行完整連結
-  OS2.vcxproj -> C:\Users\ib701\Desktop\RTOS_M11102118_PA2_EDF\Microsoft\Windows\Kernel\OS2\VS\Debug\OS2.exe
+C:\Users\ib701\Desktop\RTOS_M11102118_PA2_CUS\Micrium\Software\uCOS-II\Source\os_core.c(701,13): warning C4101: 'ptcb': 未參考的區域變數
+C:\Users\ib701\Desktop\RTOS_M11102118_PA2_CUS\Micrium\Software\uCOS-II\Source\os_core.c(1007,44): warning C4101: 'temp': 未參考的區域變數
+C:\Users\ib701\Desktop\RTOS_M11102118_PA2_CUS\Micrium\Software\uCOS-II\Source\os_core.c(1142,13): warning C4013: 'exit' 未定義; 假設 extern 傳回整數
+C:\Users\ib701\Desktop\RTOS_M11102118_PA2_CUS\Micrium\Software\uCOS-II\Source\os_core.c(1196,52): warning C4101: 'temp': 未參考的區域變數
+  OS2.vcxproj -> C:\Users\ib701\Desktop\RTOS_M11102118_PA2_CUS\Microsoft\Windows\Kernel\OS2\VS\Debug\OS2.exe

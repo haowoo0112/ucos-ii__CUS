@@ -710,6 +710,7 @@ void  OSIntExit (void)
             if (OSLockNesting == 0u) {                     /* ... and not locked.                      */
                 OS_SchedNew();
                 OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
+                //printf("%2d %d %d\n", OSTimeGet(), OSTCBCur->OSTCBId, OSTCBHighRdy->OSTCBId);
                 if (OSTCBCur->OSTCBId != OSTCBHighRdy->OSTCBId ) {          /* No Ctx Sw if current task is highest rdy */
 
                     OSTCBHighRdy->OSTCBCtxSwCtr++;         /* Inc. # of context switches to this task  */
@@ -1011,7 +1012,7 @@ void  OSStart (void)
             min = 99;
             min_ID = 99;
             for (j = i; j < TASK_NUMBER; j++) {
-                if (OSTCBPrioTbl[j]->OSTCBExtPtr->deadline_time <= min && OSTCBPrioTbl[j]->OSTCBExtPtr->deadline_time > OSTimeGet()) {
+                if (OSTCBPrioTbl[j]->OSTCBExtPtr->deadline_time < min && OSTCBPrioTbl[j]->OSTCBExtPtr->deadline_time > OSTimeGet()) {
                     min = OSTCBPrioTbl[j]->OSTCBExtPtr->deadline_time;
                     min_index = j;
                     min_ID = OSTCBPrioTbl[j]->OSTCBId;
@@ -1199,7 +1200,7 @@ void  OSTimeTick (void)
             min = 99;
             min_ID = 99;
             for (j = i; j < TASK_NUMBER; j++) {
-                if (OSTCBPrioTbl[j]->OSTCBExtPtr->deadline_time <= min && OSTCBPrioTbl[j]->OSTCBExtPtr->deadline_time > OSTimeGet()) {
+                if (OSTCBPrioTbl[j]->OSTCBExtPtr->deadline_time < min && OSTCBPrioTbl[j]->OSTCBExtPtr->deadline_time > OSTimeGet()) {
                     min = OSTCBPrioTbl[j]->OSTCBExtPtr->deadline_time;
                     min_index = j;
                     min_ID = OSTCBPrioTbl[j]->OSTCBId;
@@ -1218,11 +1219,11 @@ void  OSTimeTick (void)
             }
         }
         OS_EXIT_CRITICAL();
-        /*
+        
         for (i = 0; i < TASK_NUMBER; i++) {
             printf("%d %d\n",OSTCBPrioTbl[i]->OSTCBId, OSTCBPrioTbl[i]->OSTCBExtPtr->deadline_time);
         }
-        printf("\n");*/
+        printf("\n");
         
         INT8U      y;
         if (OSTCBCur->OSTCBPrio != OS_TASK_IDLE_PRIO) {
@@ -1242,6 +1243,7 @@ void  OSTimeTick (void)
                     if (OSRdyTbl[y] == 0u) {
                         OSRdyGrp &= (OS_PRIO)~OSTCBCur->OSTCBBitY;
                     }
+                    //printf("%d %d %d\n", OSTimeGet(), OSTCBCur->OSTCBId, OSTCBCur->OSTCBDly);
                     OS_TRACE_TASK_DLY((OSTCBCur->OSTCBExtPtr->TaskPeriodic) - (OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time));
                     OS_Sched();
                 }

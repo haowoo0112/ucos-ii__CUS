@@ -70,6 +70,7 @@ extern "C" {
 /*Input file*/
 FILE* fp;
 #define INPUT_FULE_NAME "./TaskSet.txt"
+#define APERIODIC_JOB_FULE_NAME "./AperiodicJobs.txt"
 #define OUTPUT_FULE_NAME "./Output.txt"
 #define MAX 20  //Task maxumum number
 #define INFO 4  //information of task
@@ -117,6 +118,7 @@ OS_STK** Task_STK;
 
 /*Create Task*/
 task_para_set TaskParameter[OS_MAX_TASKS];
+aperiodic_job_para aperiodic_job_parameter[100];
 
 #ifdef   OS_GLOBALS
 #define  OS_EXT
@@ -1509,6 +1511,7 @@ void          App_TimeTickHook        (void);
 #endif
 void OutFileInit(void);
 void InputFile(void);
+void InputAperiodicFile(void);
 #endif
 
 /*

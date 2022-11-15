@@ -156,6 +156,54 @@ void InputFile() {
     /*read file*/
 }
 
+void InputAperiodicFile() {
+    errno_t err;
+    if ((err = fopen_s(&fp, APERIODIC_JOB_FULE_NAME, "r")) == 0)    /*task set 1-4*/
+    {
+        printf("the file 'AperiodicJobs.txt' was opened\n");
+    }
+    else
+    {
+        printf("the file 'AperiodicJobs.txt' was not opened\n");
+    }
+
+    char str[MAX];
+    char* ptr;
+    char* pTmp = NULL;
+    int TaskInfo[INFO], i, j = 0;
+    APERIODIC_JOB_NUMBER = 0;
+    while (!feof(fp))
+    {
+        i = 0;
+        memset(str, 0, sizeof(str));
+        fgets(str, sizeof(str) - 1, fp);
+        ptr = strtok_s(str, " ", &pTmp);
+        while (ptr != NULL)
+        {
+            TaskInfo[i] = atoi(ptr);
+            ptr = strtok_s(NULL, " ", &pTmp);
+            /*printf("Info: %d\n", task_inf[i]);*/
+            if (i == 0) {
+                APERIODIC_JOB_NUMBER++;
+                aperiodic_job_parameter[j].JobID = TaskInfo[i];
+            }
+            else if (i == 1)
+                aperiodic_job_parameter[j].arrive_time = TaskInfo[i];
+            else if (i == 2) {
+                aperiodic_job_parameter[j].excution_time = TaskInfo[i];
+            }
+            else if (i == 3)
+                aperiodic_job_parameter[j].absolute_deadline_time = TaskInfo[i];
+
+            i++;
+        }
+
+        j++;
+    }
+
+    fclose(fp);
+}
+
 
 
 /*

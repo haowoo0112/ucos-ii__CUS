@@ -101,7 +101,7 @@ int  main (void)
 
     /*Input File*/
     InputFile();
-
+    InputAperiodicFile();
                                                       /* Initialize uC/OS-II                                  */
 
     /*Dynamic Create the Stack size*/

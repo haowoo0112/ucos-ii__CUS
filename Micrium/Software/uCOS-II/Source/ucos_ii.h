@@ -98,6 +98,19 @@ typedef struct task_para_set {
 int TASK_NUMBER;    //Number of the input tasks
 /*Task structure*/
 
+/*aperiodic task structure*/
+typedef struct aperiodic_job_para {
+    INT16U JobID;
+    INT16U excution_time;
+    INT16U arrive_time;
+    INT16U absolute_deadline_time;
+    INT16U CUS_deadline_time;
+} aperiodic_job_para;
+
+int APERIODIC_JOB_NUMBER;    //Number of the input jobs
+int current_job;
+/*aperiodic structure*/
+
 /*Dynamic Create the Stack size*/
 OS_STK** Task_STK;
 

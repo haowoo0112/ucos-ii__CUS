@@ -353,7 +353,7 @@ INT8U  OSTaskCreateExt (void   (*task)(void *p_arg),
                         INT16U   id,
                         OS_STK  *pbos,
                         INT32U   stk_size,
-                        void    *pext,
+                        task_para_set *pext,
                         INT16U   opt)
 {
     OS_STK     *psp;

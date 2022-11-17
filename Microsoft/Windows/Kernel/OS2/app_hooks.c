@@ -145,6 +145,7 @@ void InputFile() {
         if (i == 2) { //aperiodic task
             APERIODIC_TASK_ID = TaskParameter[j].TaskID;
             APERIODIC_TASK_UTILIZATION = TaskInfo[1];
+            APERIODIC_JOB_INDEX = j;
         }
         
         /*Initial Priority*/
@@ -198,21 +199,42 @@ void InputAperiodicFile() {
 
             i++;
         }
-
+        
         j++;
     }
 
     fclose(fp);
 
-    int temp;
+    aperiodic_job_para temp;
 
     for (i = 0; i < APERIODIC_JOB_NUMBER-1; i++) {
         for (j = 0; j < APERIODIC_JOB_NUMBER-1; j++) {
             if (aperiodic_job_parameter[j].arrive_time > aperiodic_job_parameter[j + 1].arrive_time) {
-                temp = aperiodic_job_parameter[j + 1].arrive_time;
-                aperiodic_job_parameter[j + 1].arrive_time = aperiodic_job_parameter[j].arrive_time;
-                aperiodic_job_parameter[j].arrive_time = temp;
+                temp = aperiodic_job_parameter[j + 1];
+                aperiodic_job_parameter[j + 1] = aperiodic_job_parameter[j];
+                aperiodic_job_parameter[j] = temp;
             }
+        }
+    }
+    current_job = 0;
+    
+    TaskParameter[APERIODIC_JOB_INDEX].TaskArriveTime = aperiodic_job_parameter[0].arrive_time;
+    TaskParameter[APERIODIC_JOB_INDEX].TaskExecutionTime = aperiodic_job_parameter[0].excution_time;
+    TaskParameter[APERIODIC_JOB_INDEX].deadline_time = aperiodic_job_parameter[0].absolute_deadline_time;
+    printf("%d\n", APERIODIC_JOB_INDEX);
+    for (i = 0; i < APERIODIC_JOB_NUMBER ; i++) {
+        if (i == 0) {
+            aperiodic_job_parameter[i].CUS_deadline_time = aperiodic_job_parameter[i].arrive_time + aperiodic_job_parameter[i].excution_time / (APERIODIC_TASK_UTILIZATION / 100);
+            printf("%d\n", aperiodic_job_parameter[i].CUS_deadline_time);
+        }
+        else {
+            if (aperiodic_job_parameter[i].arrive_time > aperiodic_job_parameter[i - 1].CUS_deadline_time) {
+                aperiodic_job_parameter[i].CUS_deadline_time = aperiodic_job_parameter[i].arrive_time + aperiodic_job_parameter[i].excution_time / (APERIODIC_TASK_UTILIZATION / 100);
+            }
+            else {
+                aperiodic_job_parameter[i].CUS_deadline_time = aperiodic_job_parameter[i-1].CUS_deadline_time + aperiodic_job_parameter[i].excution_time / (APERIODIC_TASK_UTILIZATION / 100);
+            }
+            printf("%d\n", aperiodic_job_parameter[i].CUS_deadline_time);
         }
     }
 }

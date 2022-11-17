@@ -783,6 +783,17 @@ void  OSIntExit (void)
                                 fclose(Output_fp);
                             }
                         }
+                        if (OSTCBCur->OSTCBId == APERIODIC_TASK_ID ) {
+                            OSTCBCur->OSTCBExtPtr->deadline_time = aperiodic_job_parameter[current_job].CUS_deadline_time;
+                            OSTCBCur->OSTCBExtPtr->TaskExecutionTime = aperiodic_job_parameter[current_job].excution_time;
+                            OSTCBCur->OSTCBExtPtr->count = 0;
+                            printf("%d\n", OSTCBCur->OSTCBExtPtr->deadline_time);
+                        }
+                        if (OSTCBCur->OSTCBId == APERIODIC_TASK_ID && current_job == APERIODIC_JOB_NUMBER-1) {
+                            OSTCBCur->OSTCBExtPtr->deadline_time = 99;
+                            OSTCBCur->OSTCBExtPtr->count = 0;
+                            printf("%d\n", OSTCBCur->OSTCBExtPtr->deadline_time);
+                        }
                         OSTCBCur->OSTCBExtPtr->TaskNumber++;
                         OSTCBCur->OSTCBCtxSwCtr = 0;
                     }
@@ -836,8 +847,6 @@ void  OSIntExit (void)
                             }
                         }
                         OSTCBCur->OSTCBExtPtr->TaskNumber++;
-                        OSTCBCur->OSTCBExtPtr->arrive_time = OSTimeGet();
-                        OSTCBCur->OSTCBExtPtr->deadline_time = OSTimeGet() + OSTCBCur->OSTCBExtPtr->TaskPeriodic;
                         OSTCBCur->OSTCBExtPtr->count = 0;
                         OSTCBCur->OSTCBCtxSwCtr = 0;
                     }
@@ -1121,21 +1130,6 @@ void  OSTimeTick (void)
     OS_EXIT_CRITICAL();
 #endif
 
-    
-    ptcb = OSTCBList;
-    while (ptcb->OSTCBPrio != OS_TASK_IDLE_PRIO) {
-        if (OSTimeGet() == ptcb->OSTCBExtPtr->TaskArriveTime) {
-            OSRdyGrp |= ptcb->OSTCBBitY;         /* Make task ready to run                   */
-            OSRdyTbl[ptcb->OSTCBY] |= ptcb->OSTCBBitX;
-            ptcb->OSTCBExtPtr->arrive_time = OSTimeGet();
-            ptcb->OSTCBExtPtr->deadline_time = OSTimeGet() + ptcb->OSTCBExtPtr->TaskPeriodic;
-            ptcb->OSTCBExtPtr->count = 0;
-            OS_Sched();
-        }
-        ptcb = ptcb->OSTCBNext;
-    }                  
-    
-
     /*Settings the end time for the OS*/
     if (OSTimeGet() > SYSTEM_END_TIME) {
         OSRunning = OS_FALSE;
@@ -1183,9 +1177,11 @@ void  OSTimeTick (void)
                     if ((ptcb->OSTCBStat & OS_STAT_SUSPEND) == OS_STAT_RDY) {  /* Is task suspended?       */
                         OSRdyGrp               |= ptcb->OSTCBBitY;             /* No,  Make ready          */
                         OSRdyTbl[ptcb->OSTCBY] |= ptcb->OSTCBBitX;
-                        ptcb->OSTCBExtPtr->arrive_time = OSTimeGet();
-                        ptcb->OSTCBExtPtr->deadline_time = OSTimeGet() + ptcb->OSTCBExtPtr->TaskPeriodic;
-                        ptcb->OSTCBExtPtr->count = 0;
+                        if (ptcb->OSTCBId != APERIODIC_TASK_ID) {
+                            ptcb->OSTCBExtPtr->arrive_time = OSTimeGet();
+                            ptcb->OSTCBExtPtr->deadline_time = OSTimeGet() + ptcb->OSTCBExtPtr->TaskPeriodic;
+                            ptcb->OSTCBExtPtr->count = 0;
+                        }
                         OS_TRACE_TASK_READY(ptcb);
                     }
                 }
@@ -1193,6 +1189,43 @@ void  OSTimeTick (void)
             ptcb = ptcb->OSTCBNext;                        /* Point at next TCB in TCB list                */
             OS_EXIT_CRITICAL();
         }
+
+        for (int i = 0; i < APERIODIC_JOB_NUMBER; i++) {
+            if (aperiodic_job_parameter[i].arrive_time == OSTimeGet()) {
+                if (i == 0) {
+                    printf("%2d Aperiodic job(%d) arrives and sets CUS server's deadline as %d.\n", OSTimeGet(), i, aperiodic_job_parameter[i].CUS_deadline_time);
+                }
+                else if (aperiodic_job_parameter[i].arrive_time >= aperiodic_job_parameter[i - 1].CUS_deadline_time) {
+                    printf("%2d Aperiodic job(%d) arrives and sets CUS server's deadline as %d.\n", OSTimeGet(), i, aperiodic_job_parameter[i].CUS_deadline_time);
+                }
+                else {
+                    printf("%2d Aperiodic job(%d) arrives. Do nothing.\n", OSTimeGet(), i);
+                }
+            }
+            if (i != 0) {
+                if (aperiodic_job_parameter[i-1].CUS_deadline_time == OSTimeGet() && aperiodic_job_parameter[i].arrive_time < aperiodic_job_parameter[i - 1].CUS_deadline_time)
+                    printf("%2d Aperiodic job(%d) arrives and sets CUS server's deadline as %d.\n", OSTimeGet(), i, aperiodic_job_parameter[i].CUS_deadline_time);
+            }
+        }
+
+        ptcb = OSTCBList;
+        while (ptcb->OSTCBPrio != OS_TASK_IDLE_PRIO) {
+            if (OSTimeGet() == ptcb->OSTCBExtPtr->TaskArriveTime) {
+                OSRdyGrp |= ptcb->OSTCBBitY;         /* Make task ready to run                   */
+                OSRdyTbl[ptcb->OSTCBY] |= ptcb->OSTCBBitX;
+                if (ptcb->OSTCBId != APERIODIC_TASK_ID) {
+                    ptcb->OSTCBExtPtr->arrive_time = OSTimeGet();
+                    ptcb->OSTCBExtPtr->deadline_time = OSTimeGet() + ptcb->OSTCBExtPtr->TaskPeriodic;
+                    ptcb->OSTCBExtPtr->count = 0;
+                }
+                else {
+                    ptcb->OSTCBExtPtr->count = 0;
+                }
+                OS_Sched();
+            }
+            ptcb = ptcb->OSTCBNext;
+        }
+
         int i = 0, min = 99, j = 0, min_index = 0, temp, min_ID = 99;
 
         OS_ENTER_CRITICAL();
@@ -1235,17 +1268,50 @@ void  OSTimeTick (void)
             
             if(OSTCBCur->OSTCBExtPtr->count == OSTCBCur->OSTCBExtPtr->TaskExecutionTime) {
                 OSTCBCur->OSTCBExtPtr->completion_time = OSTimeGet();
-                if ((OSTCBCur->OSTCBExtPtr->TaskPeriodic) - (OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time) > 0) {
-                    OSTCBCur->OSTCBDly = (OSTCBCur->OSTCBExtPtr->TaskPeriodic) - (OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time);
-                    y = OSTCBCur->OSTCBY;
-                    OSRdyTbl[y] &= (OS_PRIO)~OSTCBCur->OSTCBBitX;
-                    OS_TRACE_TASK_SUSPENDED(OSTCBCur);
-                    if (OSRdyTbl[y] == 0u) {
-                        OSRdyGrp &= (OS_PRIO)~OSTCBCur->OSTCBBitY;
+                if (OSTCBCur->OSTCBId != APERIODIC_TASK_ID) {
+                    if ((OSTCBCur->OSTCBExtPtr->TaskPeriodic) - (OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time) > 0) {
+                        OSTCBCur->OSTCBDly = (OSTCBCur->OSTCBExtPtr->TaskPeriodic) - (OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time);
+                        y = OSTCBCur->OSTCBY;
+                        OSRdyTbl[y] &= (OS_PRIO)~OSTCBCur->OSTCBBitX;
+                        OS_TRACE_TASK_SUSPENDED(OSTCBCur);
+                        if (OSRdyTbl[y] == 0u) {
+                            OSRdyGrp &= (OS_PRIO)~OSTCBCur->OSTCBBitY;
+                        }
+                        //printf("%d %d %d\n", OSTimeGet(), OSTCBCur->OSTCBId, OSTCBCur->OSTCBDly);
+                        OS_TRACE_TASK_DLY((OSTCBCur->OSTCBExtPtr->TaskPeriodic) - (OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time));
+                        OS_Sched();
                     }
-                    //printf("%d %d %d\n", OSTimeGet(), OSTCBCur->OSTCBId, OSTCBCur->OSTCBDly);
-                    OS_TRACE_TASK_DLY((OSTCBCur->OSTCBExtPtr->TaskPeriodic) - (OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time));
-                    OS_Sched();
+                }
+                else {
+                    printf("%2d Aperiodic job(%d) is finished\n", OSTimeGet(), current_job);
+                    if (aperiodic_job_parameter[current_job + 1].arrive_time >= aperiodic_job_parameter[current_job].CUS_deadline_time) {
+                        if (aperiodic_job_parameter[current_job + 1].arrive_time - OSTimeGet() > 0) {
+                            OSTCBCur->OSTCBDly = aperiodic_job_parameter[current_job + 1].arrive_time - OSTimeGet();
+                            y = OSTCBCur->OSTCBY;
+                            OSRdyTbl[y] &= (OS_PRIO)~OSTCBCur->OSTCBBitX;
+                            OS_TRACE_TASK_SUSPENDED(OSTCBCur);
+                            if (OSRdyTbl[y] == 0u)
+                                OSRdyGrp &= (OS_PRIO)~OSTCBCur->OSTCBBitY;
+                            OS_TRACE_TASK_DLY(aperiodic_job_parameter[current_job + 1].arrive_time - OSTimeGet());
+                            printf("%d\n", OSTCBCur->OSTCBDly);
+                        }
+                    }
+                    else {
+                        if (aperiodic_job_parameter[current_job].CUS_deadline_time - OSTimeGet() > 0) {
+                            OSTCBCur->OSTCBDly = aperiodic_job_parameter[current_job].CUS_deadline_time - OSTimeGet();
+                            y = OSTCBCur->OSTCBY;
+                            OSRdyTbl[y] &= (OS_PRIO)~OSTCBCur->OSTCBBitX;
+                            OS_TRACE_TASK_SUSPENDED(OSTCBCur);
+                            if (OSRdyTbl[y] == 0u)
+                                OSRdyGrp &= (OS_PRIO)~OSTCBCur->OSTCBBitY;
+                            OS_TRACE_TASK_DLY(aperiodic_job_parameter[current_job].CUS_deadline_time - OSTimeGet());
+                            printf("%d\n", OSTCBCur->OSTCBDly);
+                        }
+                    }
+                    if (OSTCBCur->OSTCBId == APERIODIC_TASK_ID && current_job == APERIODIC_JOB_NUMBER - 1)
+                        OSTCBCur->OSTCBDly = 99;
+                    if(current_job<APERIODIC_JOB_NUMBER-1)
+                        current_job++;
                 }
             }
         }
@@ -2276,7 +2342,7 @@ INT8U  OS_TCBInit (INT8U    prio,
                    OS_STK  *pbos,
                    INT16U   id,
                    INT32U   stk_size,
-                   void    *pext,
+                    task_para_set *pext,
                    INT16U   opt)
 {
     OS_TCB    *ptcb;
@@ -2396,7 +2462,7 @@ INT8U  OS_TCBInit (INT8U    prio,
             OSRdyTbl[ptcb->OSTCBY] |= ptcb->OSTCBBitX;
             OS_TRACE_TASK_READY(ptcb);
         }
-        if (ptcb->OSTCBId != OS_TASK_IDLE_ID) {
+        if (ptcb->OSTCBId != OS_TASK_IDLE_ID && ptcb->OSTCBId!= APERIODIC_TASK_ID) {
             ptcb->OSTCBExtPtr->TaskNumber = 0;
             ptcb->OSTCBExtPtr->deadline_time = 0;
         }

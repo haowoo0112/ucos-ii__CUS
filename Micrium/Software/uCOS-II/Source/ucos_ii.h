@@ -109,7 +109,8 @@ typedef struct aperiodic_job_para {
 } aperiodic_job_para;
 
 int APERIODIC_JOB_NUMBER;    //Number of the input jobs
-int APERIODIC_TASK_UTILIZATION;
+float APERIODIC_TASK_UTILIZATION;
+int APERIODIC_JOB_INDEX;
 int APERIODIC_TASK_ID;
 int current_job;
 /*aperiodic structure*/

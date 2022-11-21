@@ -738,61 +738,108 @@ void  OSIntExit (void)
                     if(OSTCBCur->OSTCBDly != 0 && OSTCBCur->OSTCBExtPtr->count == OSTCBCur->OSTCBExtPtr->TaskExecutionTime) {
                         OSTCBCur->OSTCBExtPtr->completion_time = OSTimeGet();
                         if (OSTCBHighRdy->OSTCBPrio != OS_TASK_IDLE_PRIO ) {
-                            printf("%2d\tCompletion\t task(%2d)(%2d)\t task(%2d)(%2d)\t      %2d\t     %2d\t\t    %2d\t\t   %2d\n",
-                                OSTimeGet(),
-                                OSTCBCur->OSTCBId, OSTCBCur->OSTCBExtPtr->TaskNumber,
-                                OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBExtPtr->TaskNumber,
-                                OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time,
-                                OSTCBCur->OSTCBCtxSwCtr,
-                                OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->start_time - OSTCBCur->OSTCBExtPtr->TaskExecutionTime,
-                                OSTCBCur->OSTCBDly
-                            );
-                            if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
-                            {
-                                fprintf(Output_fp, "%2d\tCompletion\t task(%2d)(%2d)\t task(%2d)(%2d)\t      %2d\t     %2d\t\t    %2d\t\t   %2d\n",
+                            if (OSTCBCur->OSTCBId != APERIODIC_TASK_ID) {
+                                printf("%2d\tCompletion\t task(%2d)(%2d)\t task(%2d)(%2d)\t      %2d\t     %2d\t\t    %2d\t\t   %2d\n",
                                     OSTimeGet(),
                                     OSTCBCur->OSTCBId, OSTCBCur->OSTCBExtPtr->TaskNumber,
                                     OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBExtPtr->TaskNumber,
                                     OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time,
                                     OSTCBCur->OSTCBCtxSwCtr,
                                     OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->start_time - OSTCBCur->OSTCBExtPtr->TaskExecutionTime,
-                                    OSTCBCur->OSTCBDly);
-                                fclose(Output_fp);
+                                    OSTCBCur->OSTCBDly
+                                );
+                                if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
+                                {
+                                    fprintf(Output_fp, "%2d\tCompletion\t task(%2d)(%2d)\t task(%2d)(%2d)\t      %2d\t     %2d\t\t    %2d\t\t   %2d\n",
+                                        OSTimeGet(),
+                                        OSTCBCur->OSTCBId, OSTCBCur->OSTCBExtPtr->TaskNumber,
+                                        OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBExtPtr->TaskNumber,
+                                        OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time,
+                                        OSTCBCur->OSTCBCtxSwCtr,
+                                        OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->start_time - OSTCBCur->OSTCBExtPtr->TaskExecutionTime,
+                                        OSTCBCur->OSTCBDly);
+                                    fclose(Output_fp);
+                                }
+                            }
+                            else {
+                                printf("%2d\tCompletion\t task(%2d)(%2d)\t task(%2d)(%2d)\t      %2d\t     %2d\t\t    %2d\t\t   N/A\n",
+                                    OSTimeGet(), 
+                                    OSTCBCur->OSTCBId, OSTCBCur->OSTCBExtPtr->TaskNumber,
+                                    OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBExtPtr->TaskNumber,
+                                    OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time,
+                                    OSTCBCur->OSTCBCtxSwCtr,
+                                    OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->start_time - OSTCBCur->OSTCBExtPtr->TaskExecutionTime
+                                );
+                                if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
+                                {
+                                    fprintf(Output_fp, "%2d\tCompletion\t task(%2d)(%2d)\t task(%2d)(%2d)\t      %2d\t     %2d\t\t    %2d\t\t   N/A\n",
+                                        OSTimeGet(),
+                                        OSTCBCur->OSTCBId, OSTCBCur->OSTCBExtPtr->TaskNumber,
+                                        OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBExtPtr->TaskNumber,
+                                        OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time,
+                                        OSTCBCur->OSTCBCtxSwCtr,
+                                        OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->start_time - OSTCBCur->OSTCBExtPtr->TaskExecutionTime
+                                    );
+                                    fclose(Output_fp);
+                                }
                             }
                         }
                         else {
-                            printf("%2d\tCompletion\t task(%2d)(%2d)\t task(%2d)\t      %2d\t     %2d\t\t    %2d\t\t   %2d\n",
-                                OSTimeGet(),
-                                OSTCBCur->OSTCBId, OSTCBCur->OSTCBExtPtr->TaskNumber,
-                                OSTCBHighRdy->OSTCBPrio, 
-                                OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time,
-                                OSTCBCur->OSTCBCtxSwCtr,
-                                OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->start_time - OSTCBCur->OSTCBExtPtr->TaskExecutionTime,
-                                OSTCBCur->OSTCBDly
-                            );
-                            if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
-                            {
-                                fprintf(Output_fp, "%2d\tCompletion\t task(%2d)(%2d)\t task(%2d)\t      %2d\t     %2d\t\t    %2d\t\t   %2d\n",
+                            if (OSTCBCur->OSTCBId != APERIODIC_TASK_ID) {
+                                printf("%2d\tCompletion\t task(%2d)(%2d)\t task(%2d)\t      %2d\t     %2d\t\t    %2d\t\t   %2d\n",
                                     OSTimeGet(),
                                     OSTCBCur->OSTCBId, OSTCBCur->OSTCBExtPtr->TaskNumber,
                                     OSTCBHighRdy->OSTCBPrio,
                                     OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time,
                                     OSTCBCur->OSTCBCtxSwCtr,
                                     OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->start_time - OSTCBCur->OSTCBExtPtr->TaskExecutionTime,
-                                    OSTCBCur->OSTCBDly);
-                                fclose(Output_fp);
+                                    OSTCBCur->OSTCBDly
+                                );
+                                if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
+                                {
+                                    fprintf(Output_fp, "%2d\tCompletion\t task(%2d)(%2d)\t task(%2d)\t      %2d\t     %2d\t\t    %2d\t\t   %2d\n",
+                                        OSTimeGet(),
+                                        OSTCBCur->OSTCBId, OSTCBCur->OSTCBExtPtr->TaskNumber,
+                                        OSTCBHighRdy->OSTCBPrio,
+                                        OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time,
+                                        OSTCBCur->OSTCBCtxSwCtr,
+                                        OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->start_time - OSTCBCur->OSTCBExtPtr->TaskExecutionTime,
+                                        OSTCBCur->OSTCBDly);
+                                    fclose(Output_fp);
+                                }
+                            }
+                            else {
+                                printf("%2d\tCompletion\t task(%2d)(%2d)\t task(%2d)\t      %2d\t     %2d\t\t    %2d\t\t   N/A\n",
+                                    OSTimeGet(),
+                                    OSTCBCur->OSTCBId, OSTCBCur->OSTCBExtPtr->TaskNumber,
+                                    OSTCBHighRdy->OSTCBPrio,
+                                    OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time,
+                                    OSTCBCur->OSTCBCtxSwCtr,
+                                    OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->start_time - OSTCBCur->OSTCBExtPtr->TaskExecutionTime
+                                );
+                                if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
+                                {
+                                    fprintf(Output_fp, "%2d\tCompletion\t task(%2d)(%2d)\t task(%2d)\t      %2d\t     %2d\t\t    %2d\t\t   N/A\n",
+                                        OSTimeGet(),
+                                        OSTCBCur->OSTCBId, OSTCBCur->OSTCBExtPtr->TaskNumber,
+                                        OSTCBHighRdy->OSTCBPrio,
+                                        OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->arrive_time,
+                                        OSTCBCur->OSTCBCtxSwCtr,
+                                        OSTCBCur->OSTCBExtPtr->completion_time - OSTCBCur->OSTCBExtPtr->start_time - OSTCBCur->OSTCBExtPtr->TaskExecutionTime
+                                    );
+                                    fclose(Output_fp);
+                                }
                             }
                         }
                         if (OSTCBCur->OSTCBId == APERIODIC_TASK_ID ) {
                             OSTCBCur->OSTCBExtPtr->deadline_time = aperiodic_job_parameter[current_job].CUS_deadline_time;
                             OSTCBCur->OSTCBExtPtr->TaskExecutionTime = aperiodic_job_parameter[current_job].excution_time;
+                            OSTCBCur->OSTCBExtPtr->arrive_time = aperiodic_job_parameter[current_job].arrive_time;
                             OSTCBCur->OSTCBExtPtr->count = 0;
-                            printf("%d\n", OSTCBCur->OSTCBExtPtr->deadline_time);
                         }
                         if (OSTCBCur->OSTCBId == APERIODIC_TASK_ID && current_job == APERIODIC_JOB_NUMBER-1) {
                             OSTCBCur->OSTCBExtPtr->deadline_time = 99;
                             OSTCBCur->OSTCBExtPtr->count = 0;
-                            printf("%d\n", OSTCBCur->OSTCBExtPtr->deadline_time);
                         }
                         OSTCBCur->OSTCBExtPtr->TaskNumber++;
                         OSTCBCur->OSTCBCtxSwCtr = 0;
@@ -1133,7 +1180,7 @@ void  OSTimeTick (void)
     /*Settings the end time for the OS*/
     if (OSTimeGet() > SYSTEM_END_TIME) {
         OSRunning = OS_FALSE;
-        exit(0);
+        //exit(0);
     }
     if (OSRunning == OS_TRUE) {
 #if OS_TICK_STEP_EN > 0u
@@ -1193,18 +1240,39 @@ void  OSTimeTick (void)
         for (int i = 0; i < APERIODIC_JOB_NUMBER; i++) {
             if (aperiodic_job_parameter[i].arrive_time == OSTimeGet()) {
                 if (i == 0) {
-                    printf("%2d Aperiodic job(%d) arrives and sets CUS server's deadline as %d.\n", OSTimeGet(), i, aperiodic_job_parameter[i].CUS_deadline_time);
+                    printf("%2d      Aperiodic job(%d) arrives and sets CUS server's deadline as %d.\n", OSTimeGet(), i, aperiodic_job_parameter[i].CUS_deadline_time);
+                    if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
+                    {
+                        fprintf(Output_fp, "%2d      Aperiodic job(%d) arrives and sets CUS server's deadline as %d.\n", OSTimeGet(), i, aperiodic_job_parameter[i].CUS_deadline_time);
+                        fclose(Output_fp);
+                    }
                 }
                 else if (aperiodic_job_parameter[i].arrive_time >= aperiodic_job_parameter[i - 1].CUS_deadline_time) {
-                    printf("%2d Aperiodic job(%d) arrives and sets CUS server's deadline as %d.\n", OSTimeGet(), i, aperiodic_job_parameter[i].CUS_deadline_time);
+                    printf("%2d      Aperiodic job(%d) arrives and sets CUS server's deadline as %d.\n", OSTimeGet(), i, aperiodic_job_parameter[i].CUS_deadline_time);
+                    if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
+                    {
+                        fprintf(Output_fp, "%2d      Aperiodic job(%d) arrives and sets CUS server's deadline as %d.\n", OSTimeGet(), i, aperiodic_job_parameter[i].CUS_deadline_time);
+                        fclose(Output_fp);
+                    }
                 }
                 else {
-                    printf("%2d Aperiodic job(%d) arrives. Do nothing.\n", OSTimeGet(), i);
+                    printf("%2d      Aperiodic job(%d) arrives. Do nothing.\n", OSTimeGet(), i);
+                    if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
+                    {
+                        fprintf(Output_fp, "%2d      Aperiodic job(%d) arrives. Do nothing.\n", OSTimeGet(), i);
+                        fclose(Output_fp);
+                    }
                 }
             }
             if (i != 0) {
-                if (aperiodic_job_parameter[i-1].CUS_deadline_time == OSTimeGet() && aperiodic_job_parameter[i].arrive_time < aperiodic_job_parameter[i - 1].CUS_deadline_time)
-                    printf("%2d Aperiodic job(%d) arrives and sets CUS server's deadline as %d.\n", OSTimeGet(), i, aperiodic_job_parameter[i].CUS_deadline_time);
+                if (aperiodic_job_parameter[i - 1].CUS_deadline_time == OSTimeGet() && aperiodic_job_parameter[i].arrive_time < aperiodic_job_parameter[i - 1].CUS_deadline_time) {
+                    printf("%2d      Aperiodic job(%d) sets CUS server's deadline as %d.\n", OSTimeGet(), i, aperiodic_job_parameter[i].CUS_deadline_time);
+                    if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
+                    {
+                        fprintf(Output_fp, "%2d      Aperiodic job(%d) sets CUS server's deadline as %d.\n", OSTimeGet(), i, aperiodic_job_parameter[i].CUS_deadline_time);
+                        fclose(Output_fp);
+                    }
+                }
             }
         }
 
@@ -1283,7 +1351,12 @@ void  OSTimeTick (void)
                     }
                 }
                 else {
-                    printf("%2d Aperiodic job(%d) is finished\n", OSTimeGet(), current_job);
+                    printf("%2d      Aperiodic job(%d) is finished\n", OSTimeGet(), current_job);
+                    if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
+                    {
+                        fprintf(Output_fp, "%2d      Aperiodic job(%d) is finished\n", OSTimeGet(), current_job);
+                        fclose(Output_fp);
+                    }
                     if (aperiodic_job_parameter[current_job + 1].arrive_time >= aperiodic_job_parameter[current_job].CUS_deadline_time) {
                         if (aperiodic_job_parameter[current_job + 1].arrive_time - OSTimeGet() > 0) {
                             OSTCBCur->OSTCBDly = aperiodic_job_parameter[current_job + 1].arrive_time - OSTimeGet();
@@ -1293,7 +1366,6 @@ void  OSTimeTick (void)
                             if (OSRdyTbl[y] == 0u)
                                 OSRdyGrp &= (OS_PRIO)~OSTCBCur->OSTCBBitY;
                             OS_TRACE_TASK_DLY(aperiodic_job_parameter[current_job + 1].arrive_time - OSTimeGet());
-                            printf("%d\n", OSTCBCur->OSTCBDly);
                         }
                     }
                     else {
@@ -1305,7 +1377,6 @@ void  OSTimeTick (void)
                             if (OSRdyTbl[y] == 0u)
                                 OSRdyGrp &= (OS_PRIO)~OSTCBCur->OSTCBBitY;
                             OS_TRACE_TASK_DLY(aperiodic_job_parameter[current_job].CUS_deadline_time - OSTimeGet());
-                            printf("%d\n", OSTCBCur->OSTCBDly);
                         }
                     }
                     if (OSTCBCur->OSTCBId == APERIODIC_TASK_ID && current_job == APERIODIC_JOB_NUMBER - 1)
@@ -1322,10 +1393,10 @@ void  OSTimeTick (void)
             OS_ENTER_CRITICAL();
             if (OSTimeGet() == ptcb->OSTCBExtPtr->deadline_time  && ptcb->OSTCBExtPtr->count < ptcb->OSTCBExtPtr->TaskExecutionTime-1 && OSTimeGet() > ptcb->OSTCBExtPtr->TaskArriveTime) {
                 //printf("%d %d %d %d\n", ptcb->OSTCBExtPtr->arrive_time, ptcb->OSTCBExtPtr->TaskPeriodic, ptcb->OSTCBExtPtr->count, ptcb->OSTCBExtPtr->TaskExecutionTime);
-                printf("%2d\tMissDeadline\t task(%2d)(%2d)\t -------------------\n", OSTimeGet(), ptcb ->OSTCBId, ptcb->OSTCBExtPtr->TaskNumber);
+                printf("%2d\tMissDeadline\t task(%2d)(%2d)\t ------------\n", OSTimeGet(), ptcb ->OSTCBId, ptcb->OSTCBExtPtr->TaskNumber);
                 if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
                 {
-                    fprintf(Output_fp, "%2d\tMissDeadline\t task(%2d)(%2d)\t -------------------\n", OSTimeGet(), ptcb->OSTCBId, ptcb->OSTCBExtPtr->TaskNumber);
+                    fprintf(Output_fp, "%2d\tMissDeadline\t task(%2d)(%2d)\t ------------\n", OSTimeGet(), ptcb->OSTCBId, ptcb->OSTCBExtPtr->TaskNumber);
                     fclose(Output_fp);
                 }
                 exit(0);

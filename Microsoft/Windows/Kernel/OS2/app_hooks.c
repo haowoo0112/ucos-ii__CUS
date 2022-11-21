@@ -218,14 +218,15 @@ void InputAperiodicFile() {
     }
     current_job = 0;
     
+    TaskParameter[APERIODIC_JOB_INDEX].arrive_time = aperiodic_job_parameter[0].arrive_time;
     TaskParameter[APERIODIC_JOB_INDEX].TaskArriveTime = aperiodic_job_parameter[0].arrive_time;
     TaskParameter[APERIODIC_JOB_INDEX].TaskExecutionTime = aperiodic_job_parameter[0].excution_time;
     TaskParameter[APERIODIC_JOB_INDEX].deadline_time = aperiodic_job_parameter[0].absolute_deadline_time;
-    printf("%d\n", APERIODIC_JOB_INDEX);
+
+
     for (i = 0; i < APERIODIC_JOB_NUMBER ; i++) {
         if (i == 0) {
             aperiodic_job_parameter[i].CUS_deadline_time = aperiodic_job_parameter[i].arrive_time + aperiodic_job_parameter[i].excution_time / (APERIODIC_TASK_UTILIZATION / 100);
-            printf("%d\n", aperiodic_job_parameter[i].CUS_deadline_time);
         }
         else {
             if (aperiodic_job_parameter[i].arrive_time > aperiodic_job_parameter[i - 1].CUS_deadline_time) {
@@ -234,7 +235,6 @@ void InputAperiodicFile() {
             else {
                 aperiodic_job_parameter[i].CUS_deadline_time = aperiodic_job_parameter[i-1].CUS_deadline_time + aperiodic_job_parameter[i].excution_time / (APERIODIC_TASK_UTILIZATION / 100);
             }
-            printf("%d\n", aperiodic_job_parameter[i].CUS_deadline_time);
         }
     }
 }

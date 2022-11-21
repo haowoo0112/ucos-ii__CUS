@@ -70,7 +70,7 @@ extern "C" {
 /*Input file*/
 FILE* fp;
 #define INPUT_FULE_NAME "./TaskSet.txt"
-#define APERIODIC_JOB_FULE_NAME "./AperiodicJobs.txt"
+#define APERIODIC_FILE_NAME "./AperiodicJobs.txt"
 #define OUTPUT_FULE_NAME "./Output.txt"
 #define MAX 20  //Task maxumum number
 #define INFO 4  //information of task

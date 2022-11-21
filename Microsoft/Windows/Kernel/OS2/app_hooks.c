@@ -130,7 +130,7 @@ void InputFile() {
             /*printf("Info: %d\n", task_inf[i]);*/
             if (i == 0) {
                 TASK_NUMBER++;
-                TaskParameter[j].TaskID = TASK_NUMBER;
+                TaskParameter[j].TaskID = TaskInfo[i];
             }
             else if (i == 1)
                 TaskParameter[j].TaskArriveTime = TaskInfo[i];
@@ -149,7 +149,7 @@ void InputFile() {
         }
         
         /*Initial Priority*/
-        TaskParameter[j].TaskPriority = j; //just an example
+        TaskParameter[j].TaskPriority = j;
 
         j++;
     }
@@ -160,7 +160,7 @@ void InputFile() {
 
 void InputAperiodicFile() {
     errno_t err;
-    if ((err = fopen_s(&fp, APERIODIC_JOB_FULE_NAME, "r")) == 0)    /*task set 1-4*/
+    if ((err = fopen_s(&fp, APERIODIC_FILE_NAME, "r")) == 0)    /*task set 1-4*/
     {
         printf("the file 'AperiodicJobs.txt' was opened\n");
     }

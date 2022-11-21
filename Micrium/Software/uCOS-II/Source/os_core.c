@@ -1180,7 +1180,7 @@ void  OSTimeTick (void)
     /*Settings the end time for the OS*/
     if (OSTimeGet() > SYSTEM_END_TIME) {
         OSRunning = OS_FALSE;
-        //exit(0);
+        exit(0);
     }
     if (OSRunning == OS_TRUE) {
 #if OS_TICK_STEP_EN > 0u
